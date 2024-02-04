@@ -1,0 +1,164 @@
+<?php
+//echo phpinfo();
+$titre="Accueil";
+session_start();
+
+if(isset($_SESSION['auth'])){
+  //var_dump($_SESSION);
+}
+require('utilitaire/class.post.php');
+require('connexion.php');
+$pdo=new DB;
+$post=new post($pdo);
+$user=$post->user();
+$lespostrecent=$pdo->requette('SELECT stype.nom_stype, type.nom_type,user.id, user.nom,user.prenom,user.photo,post.titre,post.iduser, post.post,post.photo, post.date,post.heur, post.idpost FROM post 
+JOIN user ON user.id = post.iduser 
+JOIN type ON post.idtype = type.id
+JOIN stype ON post.stype = stype.id
+  order by idpost desc LIMIT 4');
+  require('utilitaire/heade.php');
+  ' $stmt = $pdo->prepare("
+  SELECT client.id, client.nom, facture.total
+  FROM client
+  JOIN facture ON client.id = facture.id_client
+");';
+
+//Selectionner chaque post et son auteur
+'SELECT user.id, user.nom,user.prenom,user.photo,post.iduser, post.post,post.photo, post.date,post.heur FROM post JOIN user ON user.id = post.iduser  WHERE idpost=4;';
+'SELECT user.id, user.nom, post.iduser, post.post FROM post JOIN user ON user.id = post.iduser WHERE idpost=4;';
+//Chercher chaque utilisateur avec ses posts
+'SELECT user.id, user.nom, post.iduser, post.post
+FROM user
+JOIN post ON user.id = post.iduser
+WHERE id=4';
+
+'SELECT client.nom, produit.libele
+FROM facture
+JOIN client ON facture.id_client = client.id
+JOIN produit ON facture.id_produit = produit.id
+WHERE facture.id = VotreIDFacture;';
+
+'SELECT type.nom, user.id, user.nom,user.prenom,user.photo,post.iduser, post.post,post.photo, post.date,post.heur FROM post JOIN user ON user.id = post.iduser JOIN type ON post.idpost = type.id WHERE post.idpost = 3;';
+'SELECT user.nom,user.prenom FROM user JOIN post ON user.id = post.iduser WHERE post.iduser = 18 LIMIT 1';
+?>
+<!-- Begin page content -->
+<link rel="stylesheet" href="prism.css">
+<link rel="stylesheet" href="prism.js">
+<main class="flex-shrink-0 mt-5 ">
+
+  <div class="container">
+  
+  
+    <h1 class="mt-5">Forum Actualités </h1>
+
+    <p class="lead">Bienvenue sur notre plate-forme de questions et réponses, si vous avez une question n'hésité pas à la pauser et si vous avez une réponse à une éventuelle question votre réponse nous sera d'une grande utilité</p>
+    <?php
+  //var_dump($lespost);
+?>
+    <div class="container mb-7">
+    <?php if(isset($_SESSION['auth'])) :?>
+
+    <strong><?= strtoupper($user['nom']). ' '. strtoupper($user['prenom']) ?></strong>
+    <?php endif?>
+  <div class="my-3 p-3 bg-body rounded shadow-sm">
+    <h6 class=" pb-2 mb-0">Recent updates</h6>
+    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+      <a href="tous_lepost.php" class="mb-0 me-md-2">Tous les posts</a>
+    </div>
+    <?php 
+    //var_dump($lespostrecent);
+    ?>
+
+    <?php foreach ($lespostrecent as $l):?>
+
+    <!--div class="d-flex text-muted pt-3">
+      <svg class="bd-placeholder-img flex-shrink-0 me-2 rounded" width="32" height="32" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: 32x32" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#007bff"/><text x="50%" y="50%" fill="#007bff" dy=".3em">32x32</text></svg>
+      <p class="pb-3 mb-0 small lh-sm border-bottom">
+        <strong class="d-block text-gray-dark"><i class="bi bi-person-circle s"></i><?=$l['nom'] ?></strong>
+        <?=$l['post'] ?>
+      </p>
+
+    </div>
+    <?php endforeach?>
+
+    
+    <small class="d-block text-end mt-3">
+      <a href="#">All updates</a>
+    </small-->
+  </div>
+
+
+
+
+  
+
+
+    <div class="row mb-2">
+    <?php foreach ($lespostrecent as $l):?>
+
+    <div class="col-md-6">
+      <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+        <div class="col p-4 d-flex flex-column position-static">
+          <strong class="d-inline-block mb-2 text-primary"><?=$l['nom_type'] ?> </strong>
+          <h3 class="mb-0"><?=$l['nom_stype'] ?>  </h3>
+          <div class="mb-1 text-muted"><?=$l['date'] ?> </div>
+          <p class="card-text mb-auto"><?= htmlentities(substr($l['post'],0,19))?> </p>
+          <p class="card-text mb-auto"><?= $l['titre']?> </p>
+
+          <a href="vue_post.php?id=<?=$l['idpost'] ?> " class="stretched-link">Continue reading</a>
+        </div>
+        <div class="col-auto d-none d-lg-block">
+          <img class="bd-placeholder-img" width="200" height="250" src="<?php if($l['photo']===null):?>images/grace.png<?php else :?> images/<?=$l['photo'] ?> <?php endif?>" />
+
+        </div>
+      </div>
+    </div>
+    <?php endforeach?>
+    <small class="d-block text-end mt-3">
+      <a href="#">All updates</a>
+    </small>
+   
+    
+
+
+  </div>
+  <div class="coco" id="coco" >
+  
+    <div class="col-md-6">
+      <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+        <div class="col p-4 d-flex flex-column position-static">
+          <strong class="d-inline-block mb-2 text-primary"> </strong>
+          <h3 class="mb-0"></h3>
+          <div class="mb-1 text-muted"><?=$l['date'] ?> </div>
+          <p class="card-text mb-auto"><?=$l['post'] ?> </p>
+          <a href="vue_post.php?id=<?=$l['idpost'] ?> " class="stretched-link">Continue reading</a>
+        </div>
+        <div class="col-auto d-none d-lg-block">
+          <img class="bd-placeholder-img" width="200" height="250" src="<?php if($l['photo']===null):?>images/grace.png<?php else :?> images/<?=$l['photo'] ?> <?php endif?>" />
+
+        </div>
+      </div>
+    </div>
+    
+  </div>
+
+
+      Lorem ipsum, dolor sit amet consectetur adipisicing elit. Eos porro quia placeat eligendi eius laboriosam officia quas nisi excepturi suscipit nobis aspernatur voluptas temporibus ullam, dolorum ipsam vitae. Cum, repellendus?
+      Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis consequatur est maxime cupiditate, totam enim sit? Facilis temporibus atque quo veritatis provident, eligendi officiis quia cumque qui quidem, blanditiis necessitatibus.
+      Lorem ipsum dolor sit amet consectetur, adipisicing elit. Totam temporibus nam itaque perferendis saepe ipsam quasi voluptates amet deleniti eius! Nostrum eos ab asperiores animi quas dolores eveniet nihil quod?
+
+      Lorem ipsum, dolor sit amet consectetur adipisicing elit. Eos porro quia placeat eligendi eius laboriosam officia quas nisi excepturi suscipit nobis aspernatur voluptas temporibus ullam, dolorum ipsam vitae. Cum, repellendus?
+      Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis consequatur est maxime cupiditate, totam enim sit? Facilis temporibus atque quo veritatis provident, eligendi officiis quia cumque qui quidem, blanditiis necessitatibus.
+    met consectetur, adipisicing elit. Totam temporibus nam itaque perferendis saepe ipsam quasi voluptates amet deleniti eius! Nostrum eos ab asperiores animi quas dolores eveniet nihil quod?
+      Lorem ipsum, dolor sit amet consectetur adipisicing elit. Eos porro quia placeat eligendi eius laboriosam officia quas nisi excepturi suscipit nobis aspernatur voluptas temporibus ullam, dolorum ipsam vitae. Cum, repellendus?
+      Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis consequatur est maxime cupiditate, totam enim sit? Facilis temporibus atque quo veritatis provident, eligendi officiis quia cumque qui quidem, blanditiis necessitatibus.
+      Lorem ip
+    </div>
+    <p>Back to <a href="/docs/5.3/examples/sticky-footer/">the default sticky footer</a> minus the navbar.</p>
+  </div>
+
+</main>
+
+<?php
+require('utilitaire/foot.php');
+?>
